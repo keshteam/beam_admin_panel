@@ -19,7 +19,7 @@ module.exports = {
         key: '/Users/user/Desktop/subhankar/projects/BEAM/BeamBackend.pem',
         user: 'ubuntu',
         host: '52.221.238.80',
-        ref: 'master/dev',
+        ref: 'origin/dev',
         repo: 'git@github.com:keshteam/beam_admin_panel.git',
         path: '/home/ubuntu/admin_panel',
         'pre-deploy-local': "echo 'beginning staging deployment'",
