@@ -1,6 +1,6 @@
 module.exports = {
     apps: [{
-      name: 'Beam_Admin_',
+      name: 'Beam_Admin_Panel',
       script: './node_modules/react-scripts/scripts/start.js',
     }],
     deploy: {
