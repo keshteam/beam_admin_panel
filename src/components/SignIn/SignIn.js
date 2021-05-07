@@ -14,6 +14,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useHistory } from "react-router-dom";
 import axios from "axios"
+import dotenv from 'dotenv'
+dotenv.config()
 
 function Copyright() {
   return (
@@ -72,7 +74,7 @@ export default function SignIn(props) {
         username: enteredUserName,
         password: enteredPassword
       }
-      const admin = await axios.post('http://52.221.238.80:3005/admin/login', payload);
+      const admin = await axios.post(process.env.REACT_APP_API_URL+'admin/login', payload);
       localStorage.setItem('adminToken', admin.data.id)
       props.onSetToken();
       history.push("/admin/dashboard");
