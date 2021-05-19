@@ -7,6 +7,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { useHistory } from "react-router-dom";
+import dotenv from 'dotenv';
+dotenv.config();
 
 function Header(props){
     const classes = props.useStyles;

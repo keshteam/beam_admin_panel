@@ -5,19 +5,16 @@ import React, {
   import clsx from 'clsx';
   import { makeStyles, useTheme } from '@material-ui/core/styles';
   import CssBaseline from '@material-ui/core/CssBaseline';
-  // import Typography from '@material-ui/core/Typography';
   import { 
     BrowserRouter as Router, 
     Route, 
-    // Link,
     Switch,
-    // Redirect
     useHistory
   } from "react-router-dom";
   
-  // import InboxIcon from '@material-ui/icons/MoveToInbox';
-  // import MailIcon from '@material-ui/icons/Mail';
-  
+  import Dashboard from "../Dashboard/Dashboard";
+  import User from "../User/User";
+  import Feedback from "../Feedback/Feedback";
   import Header from "../Header/Header";
   import Sidebar from "../Sidebar/Sidebar";
   
@@ -117,23 +114,13 @@ import React, {
             <div className={classes.drawerHeader} />
             <Switch>
               <Route exact path={`${props.match.path}/dashboard`} component={Dashboard} />
-              <Route path={`${props.match.path}/users`} component={Users} />
-              <Route path={`${props.match.path}/feedbacks`} component={Feedbacks} />
+              <Route path={`${props.match.path}/users`} component={User} />
+              <Route path={`${props.match.path}/feedbacks`} component={Feedback} />
             </Switch>
           </main>
         </Router>
       </div>
     );
-  }
-  
-  function Dashboard() {
-    return <h2>This is dashboard page</h2>;
-  }
-  function Users() {
-    return <h2>This is users page</h2>;
-  }
-  function Feedbacks() {
-    return <h2>This is feedback page</h2>;
   }
   
   export default Main;

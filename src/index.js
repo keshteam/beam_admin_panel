@@ -9,9 +9,9 @@ import {
 
 ReactDOM.render(
   <BrowserRouter basename="">
-    <React.StrictMode>
+    {/* <React.StrictMode> */}
       <App />
-    </React.StrictMode>
+    {/* </React.StrictMode> */}
   </BrowserRouter>,
   document.getElementById('root')
 );
