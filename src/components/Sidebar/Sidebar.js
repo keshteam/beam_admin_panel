@@ -62,6 +62,12 @@ function Sidebar(props) {
               </ListItemIcon>
               <ListItemText primary="Feedbacks" />
             </ListItem>
+            <ListItem button component={Link} to="/admin/postcode">
+              <ListItemIcon>
+                <AssignmentIcon />
+              </ListItemIcon>
+              <ListItemText primary="Postcodes" />
+            </ListItem>
           </List>
         </Drawer>
     )

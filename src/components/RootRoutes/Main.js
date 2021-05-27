@@ -17,7 +17,7 @@ import React, {
   import Feedback from "../Feedback/Feedback";
   import Header from "../Header/Header";
   import Sidebar from "../Sidebar/Sidebar";
-  
+  import Postcode from "../Postcode/Postcode"
   
   const drawerWidth = 240;
   
@@ -116,6 +116,7 @@ import React, {
               <Route exact path={`${props.match.path}/dashboard`} component={Dashboard} />
               <Route path={`${props.match.path}/users`} component={User} />
               <Route path={`${props.match.path}/feedbacks`} component={Feedback} />
+              <Route path={`${props.match.path}/postcode`} component={Postcode} />
             </Switch>
           </main>
         </Router>
