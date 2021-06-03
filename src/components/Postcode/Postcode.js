@@ -8,18 +8,23 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
+import Grid from "@material-ui/core/Grid";
+import DeleteOutlined from "@material-ui/icons/DeleteOutlined";
 import axios from "axios";
-import BulkPostcodeUpload from "./BulkPostcodeUpload"
+import BulkPostcodeUpload from "./BulkPostcodeUpload";
+import AddPostcode from "./AddPostcode";
+import GetPostcodesByLocation from "./SearchByLocation";
+import SearchByPostcode from "./SearchByPostcode";
 
 const columns = [
   { id: "postcode", label: "Postcode", minWidth: 170 },
   { id: "location", label: "Location", minWidth: 170 },
-//   {
-//     id: "action",
-//     label: "Action",
-//     minWidth: 170,
-//     align: "center",
-//   },
+  {
+    id: "action",
+    label: "Action",
+    minWidth: 170,
+    align: "center",
+  },
 ];
 
 const StyledTableCell = withStyles((theme) => ({
@@ -32,14 +37,17 @@ const StyledTableCell = withStyles((theme) => ({
   },
 }))(TableCell);
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
   },
   container: {
     maxHeight: 440,
   },
-});
+  grid: {
+    flexGrow: 1,
+  },
+}));
 
 export default function Postcode() {
   const classes = useStyles();
@@ -55,26 +63,159 @@ export default function Postcode() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  const deletePostcodeHandler = async (postcodeId) => {
+    if (window.confirm("Are you sure want to delete?")) {
+      try {
+        let { data } = await axios.delete(
+          `${process.env.REACT_APP_API_URL}postcode/delete/${postcodeId}`
+        );
+
+        setPostcodes((prevPostcodes) => {
+          let prevdata = [...prevPostcodes];
+          var index = prevdata.findIndex((data) => data.id === postcodeId);
+          console.log(index);
+          if (index !== -1) {
+            prevdata.splice(index, 1);
+            return prevdata;
+          }
+        });
+
+        alert(data);
+      } catch (error) {
+        console.log("error in deletePostcodeHandler", error);
+      }
+    }
+  };
 
   useEffect(() => {
     const getPostcodesList = async () => {
       try {
-        let {data} = await axios.get(
+        let { data } = await axios.get(
           process.env.REACT_APP_API_URL + "postcode/getAll"
-        );       
+        );
+        data.map((element) => {
+          return (element.action = (
+            <React.Fragment>
+              <DeleteOutlined
+                color="secondary"
+                onClick={() => {
+                  deletePostcodeHandler(element.id);
+                }}
+              />
+            </React.Fragment>
+          ));
+        });
         setPostcodes(data);
       } catch (e) {
         console.log("error in getUserList", e);
       }
     };
-    // call feedback data on page loading
     getPostcodesList();
-  }, [postcodes]);
 
+    return () => {
+      console.log("clean up");
+    };
+  }, [setPostcodes]);
+
+  const getPostcodesByLocationHandler = (data) => {
+    data.map((element) => {
+      return (element.action = (
+        <React.Fragment>
+          <DeleteOutlined
+            color="secondary"
+            onClick={() => {
+              deletePostcodeHandler(element.id);
+            }}
+          />
+        </React.Fragment>
+      ));
+    });
+    setPostcodes(data);
+  };
+
+  const getList = async() =>{
+    try {
+      let { data } = await axios.get(
+        process.env.REACT_APP_API_URL + "postcode/getAll"
+      );
+      data.map((element) => {
+        return (element.action = (
+          <React.Fragment>
+            <DeleteOutlined
+              color="secondary"
+              onClick={() => {
+                deletePostcodeHandler(element.id);
+              }}
+            />
+          </React.Fragment>
+        ));
+      });
+      setPostcodes(data);
+    } catch (e) {
+      console.log("error in bulkDeleteHandler", e);
+    }
+  }
+
+  const bulkDeleteHandler = async() => {
+    getList();
+  };
+
+  const bulkUploadHandler = async() => {
+    getList();
+  }
+
+  const addUserHandler = (data) => {
+    data.action = (
+      <React.Fragment>
+        <DeleteOutlined
+          color="secondary"
+          onClick={() => {
+            deletePostcodeHandler(data.id);
+          }}
+        />
+      </React.Fragment>
+    );
+    setPostcodes((prevPostcodes) => {
+      return [...prevPostcodes, data];
+    });
+  };
+
+  const searchHandler = (data)=>{
+    data.action = (
+      <React.Fragment>
+        <DeleteOutlined
+          color="secondary"
+          onClick={() => {
+            deletePostcodeHandler(data.id);
+          }}
+        />
+      </React.Fragment>
+    );
+    setPostcodes([data])
+  }
 
   return (
     <>
-      <BulkPostcodeUpload /> 
+      <div className={classes.grid}>
+        <Grid container spacing={3}>
+          <Grid item xs={6}>
+            <BulkPostcodeUpload onBulkUploadHandler={bulkUploadHandler} />
+          </Grid>
+          <Grid item xs={6}>
+            <AddPostcode onAddUser={addUserHandler} />
+          </Grid>
+          <Grid item xs={6}>
+            <GetPostcodesByLocation
+              filteredData={getPostcodesByLocationHandler}
+              onBulkDelete={bulkDeleteHandler}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <SearchByPostcode onSearch={searchHandler}/>
+          </Grid>
+        </Grid>
+      </div>
+      <br />
       <Paper className={classes.root}>
         <TableContainer className={classes.container}>
           <Table stickyHeader aria-label="sticky table">

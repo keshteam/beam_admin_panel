@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useReducer } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
@@ -14,15 +14,35 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const BulkPostcodeUpload = () => {
+const intialErrorVal = {
+  title : '',
+  message : '',
+  openModal: false
+}
+const errorReducer = (state, action)=> {
+  if(action.type === 'INVALID_FILE'){
+    return { 
+      title : 'Invalid File',
+      message : 'Please select only XLSX file',
+      openModal: true
+    }
+  }
+  if(action.type === 'CLOSE_ERROR_MODAL'){
+    return intialErrorVal;
+  }
+  return intialErrorVal; 
+}
+
+const BulkPostcodeUpload = (props) => {
   const classes = useStyles();
   const xlsxFileRef = useRef();
-  const [isError, setIsError] = useState();
-  const [openModal, setOpenModal] = useState(true);
+
+  const [errorState, dispatchError] = useReducer(errorReducer, intialErrorVal)
 
   const closeErrorHandler = ()=> {
-    setOpenModal(false);
-    setIsError(null)
+    dispatchError({
+      type: 'CLOSE_ERROR_MODAL',
+    })
   }
 
   const uploadXlsxHandler = async() => {
@@ -36,18 +56,17 @@ const BulkPostcodeUpload = () => {
       const {data} = await axios.post(process.env.REACT_APP_API_URL+'postcode/bulkInsert', formData);
       alert(data);
       xlsxFileRef.current.value = null;
+      props.onBulkUploadHandler();
     } else {
-      setOpenModal(true);
-      setIsError({
-        title: "Invalid File",
-        message: "Please select only XLSX file"
+      dispatchError({
+        type: 'INVALID_FILE',      
       })
     }
   };
 
   return (
     <React.Fragment>
-      { isError && <ErrorModal handleClose={closeErrorHandler} open={openModal} title={isError.title} message={isError.message}/> }
+      { errorState.openModal && <ErrorModal handleClose={closeErrorHandler} open={errorState.openModal} title={errorState.title} message={errorState.message}/> }
       <div className={classes.root}>
         <FormControl>
           <Input type="file" inputRef={xlsxFileRef} />
@@ -60,7 +79,7 @@ const BulkPostcodeUpload = () => {
         >
           Upload
         </Button>
-      </div> <br />
+      </div> 
     </React.Fragment>
   );
 };
