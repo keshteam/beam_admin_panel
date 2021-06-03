@@ -47,6 +47,7 @@ const GetPostcodesByLocation = (props) => {
   }, []);
 
   const handleLocation = (event) => {
+    setIsDelete(false)
     setLocation(event.target.value);
     event.target.value.trim().length === 0
       ? setChecklocation(true)
