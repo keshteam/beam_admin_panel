@@ -1,10 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
 import InputLabel from '@material-ui/core/InputLabel';
-import axios from "axios";
+import PostcodeContext from "../../store/postcode-context";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -26,6 +26,7 @@ const SearchByPostcode = (props)=>{
     const classes = useStyles();
     const postcodeRef = useRef();
     const [checkPostcodeName, setCheckPostcodeName] = useState(false);
+    const postcodeCtx = useContext(PostcodeContext);
 
     const searchPostcodeHandler = async()=>{
         let postcodeName = postcodeRef.current.value;
@@ -34,15 +35,9 @@ const SearchByPostcode = (props)=>{
             return;
         }else{
             setCheckPostcodeName(false);
-            try {
-                let { data } = await axios.get(
-                    `${process.env.REACT_APP_API_URL}postcode/get/${postcodeName}`
-                );
-                props.onSearch(data)
-                postcodeRef.current.value = '';
-            } catch (error) {
-                console.log("error in find postcode", error);
-            }
+            postcodeCtx.onSearchByPostcode(postcodeName)
+            postcodeRef.current.value = '';
+            
         }   
     }
 

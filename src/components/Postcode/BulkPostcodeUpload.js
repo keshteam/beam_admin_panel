@@ -1,10 +1,11 @@
-import React, { useRef, useReducer } from "react";
+import React, { useRef, useReducer, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
 import ErrorModal from '../../UI/ErrorModal/ErrorModal';
 import axios from "axios";
+import PostcodeContext from "../../store/postcode-context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,8 +37,8 @@ const errorReducer = (state, action)=> {
 const BulkPostcodeUpload = (props) => {
   const classes = useStyles();
   const xlsxFileRef = useRef();
-
-  const [errorState, dispatchError] = useReducer(errorReducer, intialErrorVal)
+  const postcodeCtx = useContext(PostcodeContext);
+  const [errorState, dispatchError] = useReducer(errorReducer, intialErrorVal);
 
   const closeErrorHandler = ()=> {
     dispatchError({
@@ -56,7 +57,7 @@ const BulkPostcodeUpload = (props) => {
       const {data} = await axios.post(process.env.REACT_APP_API_URL+'postcode/bulkInsert', formData);
       alert(data);
       xlsxFileRef.current.value = null;
-      props.onBulkUploadHandler();
+      postcodeCtx.onGetAllPostcodes();
     } else {
       dispatchError({
         type: 'INVALID_FILE',      

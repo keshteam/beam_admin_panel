@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
@@ -7,6 +7,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import axios from "axios";
+import PostcodeContext from "../../store/postcode-context";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -29,7 +30,7 @@ const AddPostcode = (props)=> {
     const [checkPostcodeName, setCheckPostcodeName] = useState(false);
     const [location, setLocation] = useState('');
     const [checklocation, setChecklocation] = useState(false);
-    const [locations, setLocations] = useState([]);
+    const postcodeCtx = useContext(PostcodeContext);
 
     const handleLocation = (event) => {
         setLocation(event.target.value);
@@ -51,7 +52,7 @@ const AddPostcode = (props)=> {
                     location: location
                 };
                 let {data} = await axios.post(process.env.REACT_APP_API_URL+'postcode/add', payload);
-                props.onAddUser(data);
+                postcodeCtx.onAddUser(data);
                 alert('Postcode Added');
                 setPostcodeName('')
                 setLocation('')
@@ -60,24 +61,6 @@ const AddPostcode = (props)=> {
             console.log("error in add postcode", e);
         }  
     }
-
-    useEffect(() => {
-        const getAllLocations = async () => {
-          try {
-            let {data} = await axios.get(
-              process.env.REACT_APP_API_URL + "postcode/getAllLocations"
-            );       
-            setLocations(data);
-          } catch (e) {
-            console.log("error in getAllLocations", e);
-          }
-        };
-        // call feedback data on page loading
-        getAllLocations();
-        // return ()=>{
-        //     console.log('clean up')
-        // }
-    }, []);
 
     return (
         <div className={classes.root}>
@@ -95,7 +78,7 @@ const AddPostcode = (props)=> {
                 onChange={handleLocation}
                 >
                 {
-                    locations.map((location, index)=>{
+                    postcodeCtx.locations.map((location, index)=>{
                         return (
                             <MenuItem value={location} key={index} >{location}</MenuItem>
                         )

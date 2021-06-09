@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import axios from "axios";
+import PostcodeContext from "../../store/postcode-context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,22 +29,7 @@ const GetPostcodesByLocation = (props) => {
   const [location, setLocation] = useState("");
   const [checklocation, setChecklocation] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
-  const [locations, setLocations] = useState([]);
-
-  useEffect(() => {
-    const getAllLocations = async () => {
-      try {
-        let { data } = await axios.get(
-          `${process.env.REACT_APP_API_URL}postcode/getAllLocations`
-        );
-        setLocations(data);
-      } catch (e) {
-        console.log("error in getAllLocations", e);
-      }
-    };
-    // call feedback data on page loading
-    getAllLocations();
-  }, []);
+  const postcodeCtx = useContext(PostcodeContext);
 
   const handleLocation = (event) => {
     setIsDelete(false)
@@ -54,40 +39,21 @@ const GetPostcodesByLocation = (props) => {
       : setChecklocation(false);
   };
   const searchPostcodeHandler = async () => {
-    try {
-      location.trim().length === 0
-        ? setChecklocation(true)
-        : setChecklocation(false);
-      if (location.trim().length > 0) {
-        let { data } = await axios.get(
-          `${process.env.REACT_APP_API_URL}postcode/getAllByLocation/${location}`
-        );
-        props.filteredData(data);
-        setIsDelete(true);
-      }
-    } catch (error) {
-      console.log("error in get postcodes by location", error);
+    location.trim().length === 0
+      ? setChecklocation(true)
+      : setChecklocation(false);
+    if (location.trim().length > 0) {
+      postcodeCtx.onSearchByLocation(location);
+      setIsDelete(true);
     }
   };
 
   const deletePostcodesHandler = async()=> {
     if (window.confirm("Are you sure want to delete?")) {
       try{
-        let { data } = await axios.delete(
-          `${process.env.REACT_APP_API_URL}postcode/deleteMany/${location}`
-        );
-        if(data.deletedCount > 0){
-          alert('Deleted Successfully');
-          setLocations((prevLocation)=>{
-            let prevList = [...prevLocation];
-            let newList = prevList.filter(e=>{
-              return e !== location;
-            })
-            return newList;
-          })
-          setIsDelete(false);
-          props.onBulkDelete()
-        }
+        postcodeCtx.onBulkDeleteByLocation(location);
+        setLocation("")
+        setIsDelete(false);
       }catch(error){
         console.log("error in deletePostcodesHandler", error);
       }
@@ -106,7 +72,7 @@ const GetPostcodesByLocation = (props) => {
           value={location}
           onChange={handleLocation}
         >
-          {locations.map((location, index) => {
+          {postcodeCtx.locations.map((location, index) => {
             return (
               <MenuItem value={location} key={index}>
                 {location}
