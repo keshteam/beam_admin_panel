@@ -56,8 +56,9 @@ const BulkPostcodeUpload = (props) => {
       formData.append('file', xlsxFileRef.current.files[0]);
       const {data} = await axios.post(process.env.REACT_APP_API_URL+'postcode/bulkInsert', formData);
       alert(data);
-      xlsxFileRef.current.value = null;
       postcodeCtx.onGetAllPostcodes();
+      postcodeCtx.onAddLocation(xlsxFileRef.current.files[0].name);
+      xlsxFileRef.current.value = null;
     } else {
       dispatchError({
         type: 'INVALID_FILE',      

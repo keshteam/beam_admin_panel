@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SingleUserDetails = (props) => {
     const classes = useStyles();
+
   return (
     <React.Fragment>
       <FormControl>

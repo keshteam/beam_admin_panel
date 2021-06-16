@@ -8,6 +8,7 @@ const PostcodeContext = React.createContext({
     onSearchByPostcode: (postcodeName)=> {},
     onAddUser: (payload)=> {},
     onGetAllPostcodes: ()=> {},
+    onAddLocation: ()=> {},
 })
 
 export default PostcodeContext;

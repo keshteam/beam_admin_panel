@@ -151,17 +151,22 @@ const PostcodeProvider = (props)=> {
       let { data } = await axios.get(
           `${process.env.REACT_APP_API_URL}postcode/get/${postcodeName}`
       );
-      data.action = (
-        <React.Fragment>
-          <DeleteOutlined
-            color="secondary"
-            onClick={() => {
-              deletePostcodeHandler(data.id);
-            }}
-          />
-        </React.Fragment>
-      );
-      setPostcodes([data]);
+      if(data){
+        data.action = (
+          <React.Fragment>
+            <DeleteOutlined
+              color="secondary"
+              onClick={() => {
+                deletePostcodeHandler(data.id);
+              }}
+            />
+          </React.Fragment>
+        );
+        setPostcodes([data]);
+      }else{
+        alert('No Data Found')
+      }
+      
     } catch (error) {
       console.log("error in find postcode", error);
     }
@@ -183,6 +188,16 @@ const PostcodeProvider = (props)=> {
     });
   };
 
+  const getNewLocation = (fileName)=> {
+    const fileNameArr = fileName.split('.')
+    const newLocation = fileNameArr[0];
+    if(locations.indexOf(newLocation) === -1){
+      setLocations((prevLocations) => {
+        return [...prevLocations, newLocation];
+      });
+    }   
+  }
+
   return (
       <PostcodeContext.Provider 
         value={{
@@ -192,7 +207,8 @@ const PostcodeProvider = (props)=> {
           locations,
           onSearchByPostcode: searchByNameHandler,
           onAddUser: addUserHandler,
-          onGetAllPostcodes: getAllPostcodes
+          onGetAllPostcodes: getAllPostcodes,
+          onAddLocation: getNewLocation,
         }}
       >
           {props.children}
