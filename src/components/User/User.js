@@ -4,6 +4,7 @@ import UserList from "./UserList";
 import UserProvider from "../../store/UserProvider";
 import Grid from "@material-ui/core/Grid";
 import SearchByPostcode from "./SearchByPostcode";
+import SearchByLocation from "./SearchByLocation";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -23,7 +24,9 @@ export default function User() {
           <Grid item xs={6}>
             <SearchByPostcode />
           </Grid>
-          
+          <Grid item xs={6}>
+            <SearchByLocation />
+          </Grid>
         </Grid>
       </div><br/>
       <UserList/>

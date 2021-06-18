@@ -10,6 +10,22 @@ const UserProvider = (props) => {
   const [deleteUserId, setDeleteUserId] = useState();
   const [isUserDetails, setIsUserDetails] = useState();
   const [openViewModal, setViewOpenModal] = useState(false);
+  const [locations, setLocations] = useState([]);
+
+  useEffect(() => {
+    const getAllLocations = async () => {
+      try {
+        let { data } = await axios.get(
+          `${process.env.REACT_APP_API_URL}postcode/getAllLocations`
+        );
+        setLocations(data);
+      } catch (e) {
+        console.log("error in getAllLocations", e);
+      }
+    };
+    // call locations data on page loading
+    getAllLocations();
+  }, []);
 
   useEffect(() => {
     const getUserList = async () => {
@@ -115,6 +131,38 @@ const UserProvider = (props) => {
     setUsers(usersList);
   }
 
+  const getByLocationHandler = async(location)=> {
+    let usersList = await axios.get(
+      `${process.env.REACT_APP_API_URL}user/getByLocation/${location}`
+    );
+    usersList = usersList.data.map((element) => {
+      let data = {};
+      data.id = element.id;
+      data.firstName = element.firstName;
+      data.email = element.email;
+      data.isRegistration = element.isRegistration ? "Yes" : "No";
+      data.profile = element.profile;
+      data.action = (
+        <React.Fragment>
+          <VisibilityIcon
+            color="primary"
+            onClick={() => {
+              viewUserHandler(element.id);
+            }}
+          />
+          <DeleteOutlined
+            color="secondary"
+            onClick={() => {
+              deleteUserHandler(element.id);
+            }}
+          />
+        </React.Fragment>
+      );
+      return data;
+    });
+    setUsers(usersList);
+  }
+
   return (
     <>
       {isUserDetails && (
@@ -128,8 +176,9 @@ const UserProvider = (props) => {
       <UserContext.Provider
         value={{
           users,
-          // onDelete: deleteUserHandler,
-          onSearchByPostcode: getByPostCodeHandler
+          locations,
+          onSearchByPostcode: getByPostCodeHandler,
+          onSearchByLocation: getByLocationHandler
         }}
       >
         {props.children}
