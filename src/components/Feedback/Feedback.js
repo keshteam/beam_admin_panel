@@ -77,9 +77,9 @@ export default function Feedback() {
         );
         let usersList = data.map((element) => {
             let user = {};
-            user.firstName = element.user.firstName;
-            user.email = element.user.email;
-            user.isRegistration = element.user.isRegistration ? "Yes" : "No";
+            user.firstName = element.user? element.user.firstName:'';
+            user.email = element.user? element.user.email:'';
+            user.isRegistration = element.user ? "Yes" : "No";
             user.action = (
             <React.Fragment>
               <VisibilityIcon color="primary" onClick={()=>{ viewFeedbackHandler(element.feedbackData) }} />
@@ -87,7 +87,6 @@ export default function Feedback() {
           );
           return user;
         });
-        // console.log(feedbackList)
         setUsers(usersList);
       } catch (e) {
         console.log("error in getUserList", e);

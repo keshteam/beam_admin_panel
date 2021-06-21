@@ -11,6 +11,7 @@ const UserProvider = (props) => {
   const [isUserDetails, setIsUserDetails] = useState();
   const [openViewModal, setViewOpenModal] = useState(false);
   const [locations, setLocations] = useState([]);
+  const [exportStatus, setExportStatus] = useState(false);
 
   useEffect(() => {
     const getAllLocations = async () => {
@@ -99,6 +100,10 @@ const UserProvider = (props) => {
     setViewOpenModal(false);
   };
 
+  const checkExportHandler = (status)=>{
+    setExportStatus(status)
+  }
+
   const getByPostCodeHandler = async(postcode)=> {
     let usersList = await axios.get(
       `${process.env.REACT_APP_API_URL}user/getByPostcode/${postcode}`
@@ -131,6 +136,7 @@ const UserProvider = (props) => {
     setUsers(usersList);
   }
 
+
   const getByLocationHandler = async(location)=> {
     let usersList = await axios.get(
       `${process.env.REACT_APP_API_URL}user/getByLocation/${location}`
@@ -161,6 +167,7 @@ const UserProvider = (props) => {
       return data;
     });
     setUsers(usersList);
+    usersList.length > 0 ? checkExportHandler(true): checkExportHandler(false);
   }
 
   return (
@@ -178,7 +185,9 @@ const UserProvider = (props) => {
           users,
           locations,
           onSearchByPostcode: getByPostCodeHandler,
-          onSearchByLocation: getByLocationHandler
+          onSearchByLocation: getByLocationHandler,
+          exportStatus,
+          onCheckExportStatus: checkExportHandler,
         }}
       >
         {props.children}

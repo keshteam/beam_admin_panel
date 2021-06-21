@@ -1,6 +1,7 @@
 import React, { 
     useState, 
-    useEffect 
+    useEffect,
+    useCallback
 } from "react";
 import PostcodeContext from './postcode-context';
 import axios from "axios";
@@ -20,7 +21,6 @@ const PostcodeProvider = (props)=> {
           setPostcodes((prevPostcodes) => {
             let prevdata = [...prevPostcodes];
             var index = prevdata.findIndex((data) => data.id === postcodeId);
-            console.log(index);
             if (index !== -1) {
               prevdata.splice(index, 1);
               return prevdata;
@@ -33,6 +33,29 @@ const PostcodeProvider = (props)=> {
         }
       }
   };
+
+  const getAllPostcodes =  useCallback(async() => {
+    try {
+      let { data } = await axios.get(
+        process.env.REACT_APP_API_URL + "postcode/getAll"
+      );
+      data.map((element) => {
+        return (element.action = (
+          <React.Fragment>
+            <DeleteOutlined
+              color="secondary"
+              onClick={() => {
+                deletePostcodeHandler(element.id);
+              }}
+            />
+          </React.Fragment>
+        ));
+      });
+      setPostcodes(data);
+    } catch (e) {
+      console.log("error in bulkDeleteHandler", e);
+    }
+  },[]);
 
   useEffect(() => {
     const getAllLocations = async () => {
@@ -50,34 +73,8 @@ const PostcodeProvider = (props)=> {
   }, []);
 
   useEffect(() => {
-      const getPostcodesList = async () => {
-        try {
-          let { data } = await axios.get(
-            process.env.REACT_APP_API_URL + "postcode/getAll"
-          );
-          data.map((element) => {
-            return (element.action = (
-              <React.Fragment>
-                <DeleteOutlined
-                  color="secondary"
-                  onClick={() => {
-                    deletePostcodeHandler(element.id);
-                  }}
-                />
-              </React.Fragment>
-            ));
-          });
-          setPostcodes(data);
-        } catch (e) {
-          console.log("error in getUserList", e);
-        }
-      };
-      getPostcodesList();
-  
-      return () => {
-        console.log("clean up");
-      };
-  }, [setPostcodes]);
+    getAllPostcodes()
+  }, [getAllPostcodes]);
 
   const searchHandlerByLocation = async(location)=>{
     try{
@@ -122,29 +119,6 @@ const PostcodeProvider = (props)=> {
       console.log("error in bulkDeleteHandlerByLocation", error);
     }
   }
-
-  const getAllPostcodes = async () => {
-    try {
-      let { data } = await axios.get(
-        process.env.REACT_APP_API_URL + "postcode/getAll"
-      );
-      data.map((element) => {
-        return (element.action = (
-          <React.Fragment>
-            <DeleteOutlined
-              color="secondary"
-              onClick={() => {
-                deletePostcodeHandler(element.id);
-              }}
-            />
-          </React.Fragment>
-        ));
-      });
-      setPostcodes(data);
-    } catch (e) {
-      console.log("error in bulkDeleteHandler", e);
-    }
-  };
 
   const searchByNameHandler = async(postcodeName)=>{
     try {
