@@ -36,7 +36,6 @@ const GetUsersByLocation = (props) => {
   const userCtx = useContext(UserContext);
 
   const ExportToExcel = () => {
-    console.log(exportData)
     exportFromJSON({ data: exportData, fileName, exportType });
   };
 
