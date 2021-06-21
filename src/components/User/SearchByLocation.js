@@ -60,6 +60,7 @@ const GetUsersByLocation = (props) => {
   useEffect(() => {
     if(userCtx.exportStatus){
       let getUsers = [...userCtx.users];
+      
       exportData = getUsers.map((elem)=>{
         let userData = {};
         userData.Email = elem.email;
