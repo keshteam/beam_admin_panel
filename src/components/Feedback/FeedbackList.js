@@ -8,7 +8,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-import UserContext from "../../store/user-context";
+import FeedbackContext from "../../store/feedback-context";
 
 const columns = [
   { id: "firstName", label: "Name", minWidth: 170 },
@@ -42,11 +42,12 @@ const useStyles = makeStyles({
   },
 });
 
-const UserList = () => {
+const FeedbackList = () => {
+  console.log("feedbacklist");
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const { users } = useContext(UserContext);
+  let feedbackCtx = useContext(FeedbackContext);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -56,7 +57,7 @@ const UserList = () => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-console.log('user')
+
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>
@@ -75,11 +76,11 @@ console.log('user')
             </TableRow>
           </TableHead>
           <TableBody>
-            {users
+            {feedbackCtx.users
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
+              .map((row, index) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
@@ -99,7 +100,7 @@ console.log('user')
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={users.length}
+        count={feedbackCtx.users.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onChangePage={handleChangePage}
@@ -109,4 +110,4 @@ console.log('user')
   );
 };
 
-export default UserList;
+export default FeedbackList;

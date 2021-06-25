@@ -17,6 +17,12 @@ const columns = [
     label: 'Level',
     minWidth: 170,
     align: 'center',
+  },
+  {
+    id: 'updatedOn',
+    label: 'Updated',
+    minWidth: 170,
+    align: 'center',
   }
 ];
 
@@ -32,17 +38,7 @@ const useStyles = makeStyles({
 const FeedbackDetails = (props) => {
   const classes = useStyles();
   const [feedbacksData, setFeedbacksData] = useState([]);
-  // const [page, setPage] = React.useState(0);
-  // const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  // const handleChangePage = (event, newPage) => {
-  //   setPage(newPage);
-  // };
-
-  // const handleChangeRowsPerPage = (event) => {
-  //   setRowsPerPage(+event.target.value);
-  //   setPage(0);
-  // };
   useEffect(() => {
     props.userFeedback.map((element)=>{
       element.isSmiled = (element.isSmiled === '')? element.isSmiled : (element.isSmiled === 'happy')? '😃':'😔';
@@ -88,15 +84,6 @@ const FeedbackDetails = (props) => {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
-      /> */}
     </Paper>
   );
 };

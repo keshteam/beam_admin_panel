@@ -5,7 +5,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import UserContext from "../../store/user-context";
+import FeedbackContext from "../../store/feedback-context";
 import exportFromJSON from "export-from-json";
 
 let exportData = [];
@@ -33,7 +33,7 @@ const GetUsersByLocation = (props) => {
   const classes = useStyles();
   const [location, setLocation] = useState("");
   const [checklocation, setChecklocation] = useState(false);
-  const userCtx = useContext(UserContext);
+  const feedbackCtx = useContext(FeedbackContext);
 
   const ExportToExcel = () => {
     exportFromJSON({ data: exportData, fileName, exportType });
@@ -41,7 +41,7 @@ const GetUsersByLocation = (props) => {
 
   const handleLocation = (event) => {
     setLocation(event.target.value);
-    userCtx.onCheckExportStatus(false);
+    feedbackCtx.onCheckExportStatus(false);
     event.target.value.trim().length === 0
       ? setChecklocation(true)
       : setChecklocation(false);
@@ -52,25 +52,27 @@ const GetUsersByLocation = (props) => {
       return;
     } else {
       setChecklocation(false);
-      await userCtx.onSearchByLocation(location);
+      await feedbackCtx.onSearchByLocation(location);
     }
   };
   
 
   useEffect(() => {
-    if(userCtx.exportStatus){
-      let getUsers = [...userCtx.users];
-      
-      exportData = getUsers.map((elem)=>{
-        let userData = {};
-        userData.Email = elem.email;
-        userData.Zipcode = elem.profile.location.zipcode;
-        userData.Gender = elem.profile.gender;
-        userData.Ethnicity = elem.profile.ethnicityMaster+'/'+elem.profile.ethnicityMaster;
-        return userData;
-      })
+    if(feedbackCtx.exportStatus){
+      let getUsers = [...feedbackCtx.users];
+      for (let x of getUsers){
+        for(let y of x.feedbackData){
+          let obj = {};
+          obj.Message = y.feedbackMsg;
+          obj.Reaction = (y.isSmiled === '')? y.isSmiled : (y.isSmiled === 'happy')? '😃':'😔';
+          obj.Level = y.level.split('_')[1];
+          obj.Updated = y.updatedOn;
+          exportData.push(obj);
+        }
+      }
+      // console.log(exportData)
     }
-  }, [userCtx]);
+  }, [feedbackCtx]);
 
   return (
     <div className={classes.root}>
@@ -84,7 +86,7 @@ const GetUsersByLocation = (props) => {
           value={location}
           onChange={handleLocation}
         >
-          {userCtx.locations.map((location, index) => {
+          {feedbackCtx.locations.map((location, index) => {
             return (
               <MenuItem value={location} key={index}>
                 {location}
@@ -94,7 +96,7 @@ const GetUsersByLocation = (props) => {
         </Select>
         {checklocation && <p className={classes.error}>Required Location</p>}
       </FormControl>
-      {!userCtx.exportStatus ? (
+      {!feedbackCtx.exportStatus ? (
         <Button
           variant="outlined"
           size="small"
