@@ -59,6 +59,7 @@ const GetUsersByLocation = (props) => {
 
   useEffect(() => {
     if(feedbackCtx.exportStatus){
+      exportData = [];
       let getUsers = [...feedbackCtx.users];
       for (let x of getUsers){
         for(let y of x.feedbackData){

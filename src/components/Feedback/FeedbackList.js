@@ -43,7 +43,6 @@ const useStyles = makeStyles({
 });
 
 const FeedbackList = () => {
-  console.log("feedbacklist");
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
