@@ -17,7 +17,6 @@ const FeedbackProvider = (props) => {
   };
 
   const viewFeedbackHandler = async(feedbackData) =>{
-    console.log(feedbackData)
     setUserFeedback(feedbackData)
     setViewOpenModal(true)
   };
@@ -39,7 +38,7 @@ const FeedbackProvider = (props) => {
           user.feedbackData = element.feedbackData;
             user.action = (
               <React.Fragment>
-                <VisibilityIcon color="primary" onClick={()=>{ viewFeedbackHandler(element.feedbackData) }} />
+                <VisibilityIcon color="primary" onClick={ viewFeedbackHandler.bind(null, element.feedbackData) } />
               </React.Fragment>
             );
           return user;

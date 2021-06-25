@@ -40,12 +40,15 @@ const FeedbackDetails = (props) => {
   const [feedbacksData, setFeedbacksData] = useState([]);
 
   useEffect(() => {
-    props.userFeedback.map((element)=>{
-      element.isSmiled = (element.isSmiled === '')? element.isSmiled : (element.isSmiled === 'happy')? '😃':'😔';
-      element.level = element.level.split('_')[1];
-      return element;
+    let obj = props.userFeedback.map((element)=>{
+      let data = {};
+      data.feedbackMsg = element.feedbackMsg;
+      data.isSmiled = (element.isSmiled === '')? element.isSmiled : (element.isSmiled === 'happy')? '😃':'😔';
+      data.level = element.level.split('_')[1];
+      data.updatedOn = element.updatedOn;
+      return data;
     })
-    setFeedbacksData(props.userFeedback)
+    setFeedbacksData(obj);
   }, [props.userFeedback]);
 
   return (
@@ -66,7 +69,6 @@ const FeedbackDetails = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => { */}
             {feedbacksData.map((row, index) => {
               return (
                 <TableRow hover role="checkbox" tabIndex={-1} key={index}>
