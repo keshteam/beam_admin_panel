@@ -59,7 +59,7 @@ const UserProvider = (props) => {
           );
           return data;
         });
-        console.log(usersList)
+        
         setUsers(usersList);
       } catch (e) {
         console.log("error in getUserList", e);

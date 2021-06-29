@@ -5,6 +5,7 @@ const FeedbackContext = React.createContext({
     locations: [],
     onCheckExportStatus : () => {},
     onSearchByLocation : () => {},
+    onSearchByLevel : () => {},
 })
 
 export default FeedbackContext;

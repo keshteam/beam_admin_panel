@@ -87,6 +87,29 @@ const FeedbackProvider = (props) => {
     usersList.length > 0 ? checkExportHandler(true): checkExportHandler(false);
   }
 
+  const getByLevelAndDateHandler = async(payload)=> {
+    let {data} = await axios.post(
+      `${process.env.REACT_APP_API_URL}feedback/getByLevel`, payload
+    );
+
+    let usersList = data.map((element) => {
+      let user = {};
+      user.firstName = element.user ? element.user.firstName : "";
+      user.email = element.user ? element.user.email : "";
+      user.isRegistration = element.user ? "Yes" : "No";
+      user.feedbackData = element.feedbackData;
+        user.action = (
+          <React.Fragment>
+            <VisibilityIcon color="primary" onClick={()=>{ viewFeedbackHandler(element.feedbackData) }} />
+          </React.Fragment>
+        );
+      return user;
+    });
+    
+    setUsers(usersList);
+    usersList.length > 0 ? checkExportHandler(true): checkExportHandler(false);
+  }
+
   return (
     <>
       {userFeedback && (
@@ -104,6 +127,7 @@ const FeedbackProvider = (props) => {
           exportStatus,
           onCheckExportStatus: checkExportHandler,
           onSearchByLocation: getByLocationHandler,
+          onSearchByLevel: getByLevelAndDateHandler,
         }}
       >
         {props.children}
