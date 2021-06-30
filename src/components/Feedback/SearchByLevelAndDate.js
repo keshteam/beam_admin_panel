@@ -13,12 +13,18 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
+import moment from "moment";
+import exportFromJSON from "export-from-json";
+
+let exportData = [];
+const fileName = "download";
+const exportType = "xls";
 
 const useStyles = (theme) => ({
   root: {
     "& > *": {
       margin: theme.spacing(1),
-      minWidth: 120,
+      minWidth: 100,
       paddingTop: 10
     },
   },
@@ -31,7 +37,6 @@ const useStyles = (theme) => ({
     color: "red",
   },
 });
-
 class SearchByLevelAndDate extends Component {
   static contextType = FeedbackContext;
 
@@ -82,17 +87,38 @@ class SearchByLevelAndDate extends Component {
           value: "level_10",
         },
       ],
-      startDate: new Date("2014-08-18T21:11:54"),
-      endDate: new Date("2014-08-18T21:11:54"),
+      startDate: new Date("2021-01-01T21:11:54"),
+      endDate: new Date("2021-01-02T21:11:54"),
     };
   }
-  componentDidMount() {}
+
+  ExportToExcel = () => {
+    exportFromJSON({ data: exportData, fileName, exportType });
+    this.context.onLevelExportStatus(false);
+  };
+
+  // componentDidMount() {}
+
+  componentDidUpdate() {
+    if(this.context.exportStatusForLevel){
+      exportData = [];
+      let getUsers = [...this.context.users];
+      for (let x of getUsers){
+        let obj = {};
+        obj.Message = x.feedbackData[0].feedbackMsg;
+        obj.Reaction = (x.feedbackData[0].isSmiled === '')? x.feedbackData[0].isSmiled : (x.feedbackData[0].isSmiled === 'happy')? '😃':'😔';
+        obj.Level = x.feedbackData[0].level.split('_')[1];
+        obj.Updated = x.feedbackData[0].updatedOn;
+        exportData.push(obj);
+      }
+    }
+  }
 
   handleLevel = (event) => {
     this.setState({
       level: event.target.value,
     });
-    // feedbackCtx.onCheckExportStatus(false);
+    this.context.onLevelExportStatus(false);
     event.target.value.trim().length === 0
       ? this.setState({ checkLevel: true })
       : this.setState({ checkLevel: false });
@@ -103,16 +129,24 @@ class SearchByLevelAndDate extends Component {
       this.setState({ checkLevel: true });
       return;
     } else {
-      alert(this.state.level);
+      let payload = {
+        level: this.state.level,
+        start_date: moment(this.state.startDate).format('YYYY-MM-DD'),
+        end_date: moment(this.state.endDate).format('YYYY-MM-DD'),
+      }
+      // console.log(payload)
+      this.context.onSearchByLevel(payload);
     }
   };
 
   handleStartDateChange = (date) => {
+    this.context.onLevelExportStatus(false);
     this.setState({ startDate: date });
   };
 
   handleEndDateChange = (date) => {
-    this.setState({ startDate: date });
+    this.context.onLevelExportStatus(false);
+    this.setState({ endDate: date });
   };
 
   render() {
@@ -153,7 +187,7 @@ class SearchByLevelAndDate extends Component {
                 margin="normal"
                 id="date-picker-dialog-start-date"
                 label="Start Date"
-                format="MM/dd/yyyy"
+                format="dd/MM/yyyy"
                 value={this.state.startDate}
                 onChange={this.handleStartDateChange.bind(this)}
                 KeyboardButtonProps={{
@@ -167,7 +201,7 @@ class SearchByLevelAndDate extends Component {
                 margin="normal"
                 id="date-picker-dialog-end-date"
                 label="End Date"
-                format="MM/dd/yyyy"
+                format="dd/MM/yyyy"
                 value={this.state.endDate}
                 onChange={this.handleEndDateChange.bind(this)}
                 KeyboardButtonProps={{
@@ -176,7 +210,7 @@ class SearchByLevelAndDate extends Component {
               />
             </Grid>
             <Grid item xs={3}>
-              {!this.context.exportStatus ? (
+              {!this.context.exportStatusForLevel ? (
                 <Button
                   variant="outlined"
                   size="small"
@@ -192,7 +226,7 @@ class SearchByLevelAndDate extends Component {
                   size="small"
                   color="primary"
                   className={classes.button}
-                  // onClick={ExportToExcel}
+                  onClick={this.ExportToExcel}
                 >
                   Download
                 </Button>

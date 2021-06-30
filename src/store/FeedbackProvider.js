@@ -10,6 +10,7 @@ const FeedbackProvider = (props) => {
   const [openViewModal, setViewOpenModal] = useState(false);
   const [locations, setLocations] = useState([]);
   const [exportStatus, setExportStatus] = useState(false);
+  const [exportStatusForLevel, setExportStatusForLevel] = useState(false);
 
   const closeViewModalHandler = () => {
     setUserFeedback(null);
@@ -22,6 +23,9 @@ const FeedbackProvider = (props) => {
   };
   const checkExportHandler = (status)=>{
     setExportStatus(status)
+  }
+  const checkExportHandlerForLevel = (status)=>{
+    setExportStatusForLevel(status)
   }
 
   useEffect(() => {
@@ -107,7 +111,7 @@ const FeedbackProvider = (props) => {
     });
     
     setUsers(usersList);
-    usersList.length > 0 ? checkExportHandler(true): checkExportHandler(false);
+    usersList.length > 0 ? checkExportHandlerForLevel(true): checkExportHandlerForLevel(false);
   }
 
   return (
@@ -128,6 +132,8 @@ const FeedbackProvider = (props) => {
           onCheckExportStatus: checkExportHandler,
           onSearchByLocation: getByLocationHandler,
           onSearchByLevel: getByLevelAndDateHandler,
+          exportStatusForLevel,
+          onLevelExportStatus: checkExportHandlerForLevel,
         }}
       >
         {props.children}
