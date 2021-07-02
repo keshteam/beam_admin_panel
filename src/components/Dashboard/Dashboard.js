@@ -5,6 +5,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import axios from "axios"
+import GoogleMapContainer from "./GoogleMap"
 
 const useStyles = () => ({
   container: {
@@ -75,8 +76,9 @@ class Dashboard extends Component{
               </CardContent>
             </Card>
           </Grid>
-          <Grid item>
-            {/* <h1>hello world</h1> */}
+          <Grid item xs={12}>
+            
+            <GoogleMapContainer/>
           </Grid>
         </Grid>
       </div>
