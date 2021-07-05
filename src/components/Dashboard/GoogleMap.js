@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import GoogleMapReact from "google-map-react";
 import MarkerClusterer from "@google/markerclusterer";
+import axios from "axios"
 
 export default class GoogleMapContainer extends Component {
   componentDidMount() {
@@ -11,14 +12,19 @@ export default class GoogleMapContainer extends Component {
     document.body.appendChild(script);
   }
 
-  setGoogleMapRef(map, maps) {
+  async setGoogleMapRef(map, maps) {
     this.googleMapRef = map;
     this.googleRef = maps;
-    let locations = [
-      { lat: -31.56391, lng: 147.154312 },
-      { lat: -33.718234, lng: 150.363181 },
-      { lat: -33.727111, lng: 150.371124 },
-    ];
+    let {data} = await axios.get(
+      process.env.REACT_APP_API_URL + "user/getAll"
+    ); 
+    let x = data.map((element)=>{
+      var obj = {};
+      obj.lat = element.profile.location.latitude;
+      obj.lng = element.profile.location.longitude;  
+      return obj;
+    })
+    let locations = x.filter(ele=> ele.lat !== undefined);
     let markers =
       locations &&
       locations.map((location) => {
@@ -34,15 +40,15 @@ export default class GoogleMapContainer extends Component {
 
     static defaultProps = {
       center: {
-        lat: -31.56391,
-        lng: 147.154312,
+        lat: 53.4808,
+        lng: -2.2426,
       },
-      zoom: 4,
+      zoom: 3,
     };
 
   render() {
     return (
-      <div style={{ height: "100vh", width: "100%" }}>
+      <div style={{ height: "80vh", width: "100%" }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: `AIzaSyAyXZK5sxYTIzCdsdiP75n-3mvDhmyUYDY` }}
           yesIWantToUseGoogleMapApiInternals
