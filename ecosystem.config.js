@@ -18,7 +18,7 @@ module.exports = {
       staging: {
         key: '/Users/user/Desktop/subhankar/projects/BEAM/BeamBackend.pem',
         user: 'ubuntu',
-        host: '18.141.183.123',
+        host: '3.0.180.104',
         ref: 'origin/dev',
         repo: 'git@github.com:keshteam/beam_admin_panel.git',
         path: '/home/ubuntu/admin_panel',
