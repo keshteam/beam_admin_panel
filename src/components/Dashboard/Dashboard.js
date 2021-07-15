@@ -6,6 +6,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import axios from "axios"
 import GoogleMapContainer from "./GoogleMap"
+import PieChart from "./PieChart"
 
 const useStyles = () => ({
   container: {
@@ -79,6 +80,9 @@ class Dashboard extends Component{
           <Grid item xs={12}>
             
             <GoogleMapContainer/>
+          </Grid>
+          <Grid item xs={6}>           
+            <PieChart/>
           </Grid>
         </Grid>
       </div>

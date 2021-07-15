@@ -18,13 +18,13 @@ export default class GoogleMapContainer extends Component {
     let {data} = await axios.get(
       process.env.REACT_APP_API_URL + "user/getAll"
     ); 
-    let x = data.map((element)=>{
+    let locations = data.map((element)=>{
       var obj = {};
       obj.lat = element.profile.location.latitude;
       obj.lng = element.profile.location.longitude;  
       return obj;
-    })
-    let locations = x.filter(ele=> ele.lat !== undefined);
+    }).filter(ele=> ele.lat !== null && ele.lat !== undefined);
+    // console.log(locations)
     let markers =
       locations &&
       locations.map((location) => {
