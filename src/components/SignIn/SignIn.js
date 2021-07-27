@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -68,10 +68,12 @@ export default function SignIn(props) {
     history.push("/admin/dashboard");
   }
   const userNameHandler = (event)=>{
+    setChecked(false);
     setEnteredUserName(event.target.value)
   }
 
   const passwordHandler = (event)=>{
+    setChecked(false);
     setEnteredPassword(event.target.value)
   }
 
@@ -82,15 +84,41 @@ export default function SignIn(props) {
 
   const rememberMeHandler = (event) => {
     event.preventDefault();
+    if(enteredUserName.trim().length === 0){
+      setOpenModal(true);
+      setIsError({
+        title: "Username Required",
+        message: "Please enter valid username"
+      })
+      return;
+    }
+    if(enteredPassword.trim().length === 0){
+      setOpenModal(true);
+      setIsError({
+        title: "Password Required",
+        message: "Please enter valid password"
+      })
+      return;
+    }
+
     setChecked(event.target.checked);
     if(event.target.checked){
       Cookies.set('beamUserName', enteredUserName);
       Cookies.set('beamPassword', enteredPassword);
+      Cookies.set('beamRememberMeStatus', true);
     }else{
       Cookies.set('beamUserName', '');
       Cookies.set('beamPassword', '');
+      Cookies.set('beamRememberMeStatus', false);
     }
   }
+
+  useEffect(()=>{
+    // console.log(typeof(Cookies.get('beamRememberMeStatus')))
+    if(Cookies.get('beamRememberMeStatus') === 'true'){
+      setChecked(true);
+    }
+  }, [])
 
   const handleSubmit = async(event)=>{
     event.preventDefault();
