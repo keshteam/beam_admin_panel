@@ -15,6 +15,7 @@ import Container from '@material-ui/core/Container';
 import { useHistory } from "react-router-dom";
 import ErrorModal from '../../UI/ErrorModal/ErrorModal';
 import axios from "axios";
+import Cookies from 'js-cookie';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -55,10 +56,13 @@ const useStyles = makeStyles((theme) => ({
 export default function SignIn(props) {
   const classes = useStyles();
   let history = useHistory();
-  const [enteredUserName, setEnteredUserName] = useState('');
-  const [enteredPassword, setEnteredPassword] = useState('');
+  const [checked, setChecked] = useState(false);
+  const [enteredUserName, setEnteredUserName] = useState(Cookies.get('beamUserName'));
+  const [enteredPassword, setEnteredPassword] = useState(Cookies.get('beamPassword'));
   const [isError, setIsError] = useState();
   const [openModal, setOpenModal] = useState(false);
+
+  // console.log(localStorage.getItem('adminToken'))
 
   if(localStorage.getItem('adminToken')) {
     history.push("/admin/dashboard");
@@ -74,6 +78,18 @@ export default function SignIn(props) {
   const closeErrorHandler = ()=> {
     setOpenModal(false);
     setIsError(null)
+  }
+
+  const rememberMeHandler = (event) => {
+    event.preventDefault();
+    setChecked(event.target.checked);
+    if(event.target.checked){
+      Cookies.set('beamUserName', enteredUserName);
+      Cookies.set('beamPassword', enteredPassword);
+    }else{
+      Cookies.set('beamUserName', '');
+      Cookies.set('beamPassword', '');
+    }
   }
 
   const handleSubmit = async(event)=>{
@@ -157,7 +173,7 @@ export default function SignIn(props) {
               value={enteredPassword}
             />
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={<Checkbox onChange={rememberMeHandler.bind(this)} checked={checked} value="remember" color="primary" />}
               label="Remember me"
             />
             <Button

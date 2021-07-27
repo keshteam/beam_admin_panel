@@ -8,7 +8,7 @@ import {
   // Redirect
 } from "react-router-dom";
 
-// import NoMatch from './components/NoMatch';
+import NoMatch from './components/NoMatch';
 import Main from "./components/RootRoutes/Main";
 import SignIn from "./components/SignIn/SignIn";
 
@@ -21,7 +21,7 @@ const setTokenHandler = () => {
       <Switch>
           <Route exact path="/" component={() => { return <SignIn onSetToken={setTokenHandler} />}} /> 
           <Route  path="/admin" component={Main} />
-          {/* <Route component={NoMatch} /> */}
+          <Route component={NoMatch} />
       </Switch>
     </Router>
   );

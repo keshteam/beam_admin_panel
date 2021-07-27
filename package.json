@@ -21,6 +21,7 @@
     "dotenv": "^9.0.0",
     "export-from-json": "^1.4.0",
     "google-map-react": "^2.1.10",
+    "js-cookie": "^3.0.0",
     "material-ui-icons": "^1.0.0-beta.36",
     "moment": "^2.29.1",
     "react": "^17.0.2",
