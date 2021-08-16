@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import DeleteOutlined from "@material-ui/icons/DeleteOutlined";
 import VisibilityIcon from "@material-ui/icons/Visibility";
+import StarOutlineIcon from "@material-ui/icons/StarOutline";
 import UserContext from "./user-context";
 import axios from "axios";
 import ViewModal from "../UI/ViewModal/ViewModal";
+import GetStarsFromLevel from "../components/User/GetStarsFromLevel";
 
 const UserProvider = (props) => {
   const [users, setUsers] = useState([]);
@@ -12,6 +14,8 @@ const UserProvider = (props) => {
   const [openViewModal, setViewOpenModal] = useState(false);
   const [locations, setLocations] = useState([]);
   const [exportStatus, setExportStatus] = useState(false);
+  const [starData, setStarData] = useState([]);
+  const [openStarModal, setOpenStarModal] = useState(false);
 
   useEffect(() => {
     const getAllLocations = async () => {
@@ -49,6 +53,10 @@ const UserProvider = (props) => {
                   viewUserHandler(element.id);
                 }}
               />
+              <StarOutlineIcon
+                color="primary"
+                onClick={getStarHandler.bind(null, element.id)}
+              />
               <DeleteOutlined
                 color="secondary"
                 onClick={() => {
@@ -59,7 +67,7 @@ const UserProvider = (props) => {
           );
           return data;
         });
-        
+
         setUsers(usersList);
       } catch (e) {
         console.log("error in getUserList", e);
@@ -95,16 +103,41 @@ const UserProvider = (props) => {
     }
   };
 
+  const getStarHandler = async (userId) => {
+    let starArr = [];
+    try {
+      let { data } = await axios.get(
+        `${process.env.REACT_APP_API_URL}user/level/get/${userId}`
+      );
+      for (let key in data) {
+        if (data[key].data && data[key].data.stars) {
+          // console.log(key)
+          // console.log(data[key].data.stars.findIndex(p => p.stage === "final-round"))
+          let index = data[key].data.stars.findIndex(p => p.stage === "final-round");
+          if( index !== -1){
+            starArr.push({ level:key, finalRoundStar: data[key].data.stars[index].star });
+          }
+          
+        }
+      }
+      // console.log(starArr);
+      setStarData(starArr);
+      setOpenStarModal(true);
+    } catch (e) {
+      console.log("error in view user", e);
+    }
+  };
+
   const closeViewModalHandler = () => {
     setIsUserDetails(null);
     setViewOpenModal(false);
   };
 
-  const checkExportHandler = (status)=>{
-    setExportStatus(status)
-  }
+  const checkExportHandler = (status) => {
+    setExportStatus(status);
+  };
 
-  const getByPostCodeHandler = async(postcode)=> {
+  const getByPostCodeHandler = async (postcode) => {
     let usersList = await axios.get(
       `${process.env.REACT_APP_API_URL}user/getByPostcode/${postcode}`
     );
@@ -134,10 +167,9 @@ const UserProvider = (props) => {
       return data;
     });
     setUsers(usersList);
-  }
+  };
 
-
-  const getByLocationHandler = async(location)=> {
+  const getByLocationHandler = async (location) => {
     let usersList = await axios.get(
       `${process.env.REACT_APP_API_URL}user/getByLocation/${location}`
     );
@@ -166,10 +198,14 @@ const UserProvider = (props) => {
       );
       return data;
     });
-    
+
     setUsers(usersList);
-    usersList.length > 0 ? checkExportHandler(true): checkExportHandler(false);
-  }
+    usersList.length > 0 ? checkExportHandler(true) : checkExportHandler(false);
+  };
+
+  const closeStarModalHandler = () => {
+    setOpenStarModal(false);
+  };
 
   return (
     <>
@@ -181,6 +217,14 @@ const UserProvider = (props) => {
           userData={isUserDetails}
         />
       )}
+
+      {
+        <GetStarsFromLevel
+          open={openStarModal}
+          handleClose={closeStarModalHandler}
+          starData={starData}
+        />
+      }
       <UserContext.Provider
         value={{
           users,

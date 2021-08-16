@@ -53,7 +53,7 @@ export default function ViewModal(props) {
             <div className={classes.root}>
               {props.userData && <SingleUserDetails userData={props.userData}/>}
               {props.userFeedback && <FeedbackDetails userFeedback={props.userFeedback}/>}
-              
+              {props.starData && <p>hello world</p>}
             </div><br/>
            
             <Button variant="outlined" size="small" color="primary" onClick={props.handleClose}>Close</Button>
