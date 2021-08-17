@@ -113,11 +113,15 @@ const UserProvider = (props) => {
         if (data[key].data && data[key].data.stars) {
           // console.log(key)
           // console.log(data[key].data.stars.findIndex(p => p.stage === "final-round"))
-          let index = data[key].data.stars.findIndex(p => p.stage === "final-round");
-          if( index !== -1){
-            starArr.push({ level:key, finalRoundStar: data[key].data.stars[index].star });
+          let index = data[key].data.stars.findIndex(
+            (p) => p.stage === "final-round"
+          );
+          if (index !== -1) {
+            starArr.push({
+              level: key,
+              finalRoundStar: data[key].data.stars[index].star,
+            });
           }
-          
         }
       }
       // console.log(starArr);
@@ -156,6 +160,10 @@ const UserProvider = (props) => {
               viewUserHandler(element.id);
             }}
           />
+          <StarOutlineIcon
+            color="primary"
+            onClick={getStarHandler.bind(null, element.id)}
+          />
           <DeleteOutlined
             color="secondary"
             onClick={() => {
@@ -188,6 +196,10 @@ const UserProvider = (props) => {
               viewUserHandler(element.id);
             }}
           />
+          <StarOutlineIcon
+            color="primary"
+            onClick={getStarHandler.bind(null, element.id)}
+          />
           <DeleteOutlined
             color="secondary"
             onClick={() => {
@@ -205,6 +217,40 @@ const UserProvider = (props) => {
 
   const closeStarModalHandler = () => {
     setOpenStarModal(false);
+  };
+
+  const getByUserIdHandler = async (userId) => {
+    try {
+      let usersArray = [];
+      let { data } = await axios.get(
+        `${process.env.REACT_APP_API_URL}user/get/${userId}`
+      );
+      data.isRegistration = data.isRegistration ? "Yes" : "No";
+      data.action = (
+        <React.Fragment>
+          <VisibilityIcon
+            color="primary"
+            onClick={() => {
+              viewUserHandler(data.id);
+            }}
+          />
+          <StarOutlineIcon
+            color="primary"
+            onClick={getStarHandler.bind(null, data.id)}
+          />
+          <DeleteOutlined
+            color="secondary"
+            onClick={() => {
+              deleteUserHandler(data.id);
+            }}
+          />
+        </React.Fragment>
+      );
+      usersArray.push(data);
+      setUsers(usersArray);
+    } catch (e) {
+      console.log("error in getByUserIdHandler", e);
+    }
   };
 
   return (
@@ -233,6 +279,7 @@ const UserProvider = (props) => {
           onSearchByLocation: getByLocationHandler,
           exportStatus,
           onCheckExportStatus: checkExportHandler,
+          onSearchByUserId: getByUserIdHandler,
         }}
       >
         {props.children}

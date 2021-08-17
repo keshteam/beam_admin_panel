@@ -6,6 +6,7 @@ const UserContext = React.createContext({
     onSearchByPostcode: (postcode)=> {},
     exportStatus: false,
     onCheckExportStatus: (status)=> {},
+    onSearchByUserId: (userId)=> {},
 })
 
 export default UserContext;
