@@ -7,7 +7,7 @@ module.exports = {
       production: {
         key: '/Users/user/Desktop/subhankar/projects/BEAM/BeamBackend.pem',
         user: 'ubuntu',
-        host: '3.139.245.24',
+        host: '3.1.205.255',
         ref: 'origin/master',
         repo: 'git@github.com:keshteam/beam_admin_panel.git',
         path: '/home/ubuntu/admin_panel',
